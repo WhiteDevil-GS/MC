@@ -1,0 +1,62 @@
+#include <stdio.h>
+
+#define N 8
+int graph[][N + 1] = {
+    {0, 1, 2, 3, 4, 5, 6, 7, 8},
+    {1, 0, 55, 25, 45, 9999, 9999, 9999, 9999},
+    {2, 55, 0, 9999, 9999, 5, 9999, 9999, 9999},
+    {3, 25, 9999, 0, 9999, 40, 9999, 9999, 9999},
+    {4, 45, 9999, 9999, 0, 20, 9999, 9999, 30},
+    {5, 9999, 5, 40, 20, 0, 35, 15, 9999},
+    {6, 9999, 9999, 9999, 9999, 35, 0, 10, 9999},
+    {7, 9999, 9999, 9999, 9999, 15, 10, 0, 50},
+    {8, 9999, 9999, 9999, 30, 9999, 9999, 50, 0}
+};
+int result[N + 1][2];
+
+int findMinEdgeVertex(int near[]) {
+    int minVertex, u, min = 9999;
+    for (minVertex = 1; minVertex <= N; ++minVertex) {
+        if (near[minVertex] != 0) {
+            if (graph[minVertex][near[minVertex]] < min) {
+                min = graph[minVertex][near[minVertex]];
+                u = minVertex;
+            }
+        }
+    }
+    return u;
+}
+
+int calculateMST() {
+    int i, j, k, minCost;
+    int near[N + 1];
+    minCost = 0;
+    for (i = 2; i <= N; ++i)
+        near[i] = 1;
+    result[1][0] = 1;
+    near[1] = 0;
+    for (i = 1; i <= N - 1; ++i) {
+        j = findMinEdgeVertex(near);
+        result[i][0] = j;
+        result[i][1] = near[j];
+        minCost += graph[j][near[j]];
+        near[j] = 0;
+        for (k = 1; k <= N; ++k) {
+            if ((near[k] != 0) && (graph[k][near[k]] > graph[k][j])) {
+                near[k] = j;
+            }
+        }
+    }
+    return minCost;
+}
+
+int main() {
+    int i, j;
+    printf("\n\n\n");
+    printf("\t\t\tMinimum Cost = %d\n", calculateMST());
+    printf("\n\t\t\tMinimum Spanning Tree\n");
+    for (i = 1; i < N; ++i)
+        printf("\n\t\t\t%6d - %d\n", result[i][0], result[i][1]);
+    printf("\n\n\n");
+    return 0;
+}
