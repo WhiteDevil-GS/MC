@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define N 8
+#define INF 9999
+
+int graph[][N + 1] = {
+    {0, 1, 2, 3, 4, 5, 6, 7, 8},
+    {1, 0, 55, 25, 45, INF, INF, INF, INF},
+    {2, 55, 0, INF, INF, 5, INF, INF, INF},
+    {3, 25, INF, 0, INF, 40, INF, INF, INF},
+    {4, 45, INF, INF, 0, 20, INF, INF, 30},
+    {5, INF, 5, 40, 20, 0, 35, 15, INF},
+    {6, INF, INF, INF, INF, 35, 0, 10, INF},
+    {7, INF, INF, INF, INF, 15, 10, 0, 50},
+    {8, INF, INF, INF, 30, INF, INF, 50, 0}
+};
+
+void dijkstra(int graph[N + 1][N + 1], int source) {
+    int dist[N + 1];
+    bool sptSet[N + 1];
+
+    for (int i = 1; i <= N; i++) {
+        dist[i] = INF;
+        sptSet[i] = false;
+    }
+    dist[source] = 0;
+
+    for (int count = 1; count < N; count++) {
+        int min = INF, u;
+
+        for (int v = 1; v <= N; v++) {
+            if (!sptSet[v] && dist[v] <= min) {
+                min = dist[v];
+                u = v;
+            }
+        }
+
+        sptSet[u] = true;
+
+        for (int v = 1; v <= N; v++) {
+            if (!sptSet[v] && graph[u][v] && dist[u] != INF && dist[u] + graph[u][v] < dist[v]) {
+                dist[v] = dist[u] + graph[u][v];
+            }
+        }
+    }
+
+    printf("Vertex \t Distance from Source\n");
+    for (int i = 1; i <= N; i++) {
+        printf("%d \t %d\n", i, dist[i]);
+    }
+}
+
+int main() {
+    int source = 1; // Graph 1 source vertex.
+    // int source = 5; // Graph 2 source vertex.
+    dijkstra(graph, source);
+    return 0;
+}
